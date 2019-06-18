@@ -8,7 +8,7 @@ const auth = require('../../middleware/auth');
 const {
     check,
     validationResult
-} = require('express-validator/check')
+} = require('express-validator/check');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const Profile = require('../../models/Profile');
@@ -258,8 +258,6 @@ router.get('/github/:username', wrap(async (req, res) => {
 
     request(options, (error, response, body) => {
         if (error) console.error(error);
-        console.log(response)
-        console.log(body)
         if (response.statusCode !== 200) return res.status(404).json({ msg: 'No Github profile found' })
 
         res.json(JSON.parse(body));
