@@ -5,6 +5,8 @@ import Landing from './components/layout/Landing';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
+import Dashboard from './components/dashboard/Dashboard';
+
 
 // Redux
 import { Provider } from 'react-redux';
@@ -13,6 +15,7 @@ import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
 import './App.css';
+import PrivateRoute from './components/routing/PrivateRoute';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -25,17 +28,18 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <Router>
-				<Navbar />
-				<Route exact path='/' component={Landing} />
-				<section className="container">
-					<Alert />
-					<Switch>
-						<Route exact path="/login" component={Login}></Route>
-						<Route exact path="/register" component={Register}></Route>
-					</Switch>
-				</section>
-			</Router>
+		<Router>
+			<Navbar />
+			<Route exact path='/' component={Landing} />
+			<section className="container">
+				<Alert />
+				<Switch>
+					<Route exact path="/login" component={Login}></Route>
+					<Route exact path="/register" component={Register}></Route>
+					<PrivateRoute exact path="/dashboard" component={Dashboard}></PrivateRoute>
+				</Switch>
+			</section>
+		</Router>
     </Provider>
   );
 };
