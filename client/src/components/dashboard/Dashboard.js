@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCurrentProfile } from '../../actions/profile';
 import Spinner from '../layout/Spinner';
+import DashboardActions from './DashboardActions';
 
 const Dashboard = ({ getCurrentProfile, auth: { user }, profile: { profile, loading } }) => {
 	useEffect(() => {
@@ -19,12 +20,18 @@ const Dashboard = ({ getCurrentProfile, auth: { user }, profile: { profile, load
 				<i className="fas fa-user" />
 				Welcome {user && user.name}
 			</p>
-			{profile !== null ? <Fragment>Profile</Fragment> : <Fragment>
-				<p>No profile</p>
-				<Link to="/create-profile" className="btn btn-primary my-1">
-					Create profile
-				</Link>
-			</Fragment>}
+			{profile !== null ? (
+				<Fragment>
+					<DashboardActions />
+				</Fragment>
+			) : (
+				<Fragment>
+					<p>No profile</p>
+					<Link to="/create-profile" className="btn btn-primary my-1">
+						Create profile
+					</Link>
+				</Fragment>
+			)}
 		</Fragment>
 	);
 };

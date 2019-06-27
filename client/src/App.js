@@ -8,6 +8,7 @@ import Alert from './components/layout/Alert';
 import Dashboard from './components/dashboard/Dashboard';
 import PrivateRoute from './components/routing/PrivateRoute';
 import CreateProfile from './components/profile-form/CreateProfile';
+import EditProfile from './components/profile-form/EditProfile';
 
 // Redux
 import { Provider } from 'react-redux';
@@ -18,31 +19,32 @@ import setAuthToken from './utils/setAuthToken';
 import './App.css';
 
 if (localStorage.token) {
-  setAuthToken(localStorage.token);
+	setAuthToken(localStorage.token);
 }
 
 const App = () => {
-  useEffect(() => {
-    store.dispatch(loadUser());
-  }, []);
+	useEffect(() => {
+		store.dispatch(loadUser());
+	}, []);
 
-  return (
-    <Provider store={store}>
-		<Router>
-			<Navbar />
-			<Route exact path='/' component={Landing} />
-			<section className="container">
-				<Alert />
-				<Switch>
-					<Route exact path="/login" component={Login}></Route>
-					<Route exact path="/register" component={Register}></Route>
-					<PrivateRoute exact path="/dashboard" component={Dashboard}></PrivateRoute>
-					<PrivateRoute exact path="/create-profile" component={CreateProfile}></PrivateRoute>
-				</Switch>
-			</section>
-		</Router>
-    </Provider>
-  );
+	return (
+		<Provider store={store}>
+			<Router>
+				<Navbar />
+				<Route exact path="/" component={Landing} />
+				<section className="container">
+					<Alert />
+					<Switch>
+						<Route exact path="/login" component={Login} />
+						<Route exact path="/register" component={Register} />
+						<PrivateRoute exact path="/dashboard" component={Dashboard} />
+						<PrivateRoute exact path="/create-profile" component={CreateProfile} />
+						<PrivateRoute exact path="/edit-profile" component={EditProfile} />
+					</Switch>
+				</section>
+			</Router>
+		</Provider>
+	);
 };
 
 export default App;
