@@ -1,13 +1,14 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Spinner from '../layout/Spinner';
 import { getPosts } from '../../actions/post';
+import Spinner from '../layout/Spinner';
+import PostItem from './PostItem';
 
-const Posts = ({ getPost, post: { posts, loading } }) => {
+const Posts = ({ getPosts, post: { posts, loading } }) => {
 	useEffect(() => {
 		getPosts();
-	}, []);
+	}, [getPosts]);
 
 	return loading ? (
 		<Spinner />
@@ -15,8 +16,14 @@ const Posts = ({ getPost, post: { posts, loading } }) => {
 		<Fragment>
 			<h1 className="large text-primary">Posts</h1>
 			<p className="lead">
-				<i className="fas fa-user" /> WElcome to the comunity
+				<i className="fas fa-user" /> Welcome to the comunity
 			</p>
+			{/* {POST FORM} */}
+			<div className="posts">
+				{posts.map(post => (
+					<PostItem key={post._id} post={post} />
+				))}
+			</div>
 		</Fragment>
 	);
 };
