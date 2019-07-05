@@ -1,148 +1,178 @@
 const express = require('express');
 const router = express.Router();
-const {
-    check,
-    validationResult
-} = require('express-validator/check');
+const { check, validationResult } = require('express-validator/check');
 const wrap = require('express-async-wrap');
 const auth = require('../../middleware/auth');
 
 const Post = require('../../models/Post');
 const Profile = require('../../models/Profile');
-const User = require('../../models/User');
+const User = require('../../models/user/User');
 
-router.post('/', [auth,
-    [
-        check('text', 'Text is required').not().isEmpty(),
-    ]
-], wrap(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            errors: errors.array()
-        });
-    }
+router.post(
+	'/',
+	[
+		auth,
+		[
+			check('text', 'Text is required')
+				.not()
+				.isEmpty()
+		]
+	],
+	wrap(async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({
+				errors: errors.array()
+			});
+		}
 
-    const user = await User.findById(req.user.id).select('-password');
+		const user = await User.findById(req.user.id).select('-password');
 
-    const newPost = new Post({
-        text: req.body.text,
-        name: user.name,
-        avatar: user.avatar,
-        user: req.user.id
-    });
+		const newPost = new Post({
+			text: req.body.text,
+			name: user.name,
+			avatar: user.avatar,
+			user: req.user.id
+		});
 
-    const post = await newPost.save();
+		const post = await newPost.save();
 
-    res.json(post);
-}));
+		res.json(post);
+	})
+);
 
+router.get(
+	'/',
+	auth,
+	wrap(async (req, res) => {
+		const posts = await Post.find().sort({ date: -1 });
 
-router.get('/', auth, wrap(async(req, res) => {
-    const posts = await Post.find().sort({ date: -1 });
+		res.json(posts);
+	})
+);
 
-    res.json(posts);
-}));
+router.get(
+	'/:id',
+	auth,
+	wrap(async (req, res) => {
+		const posts = await Post.findById(req.params.id);
 
+		if (!posts) res.status(404).json({ msg: 'Post not found' });
+		res.json(posts);
+	})
+);
 
-router.get('/:id', auth, wrap(async(req, res) => {
-    const posts = await Post.findById(req.params.id);
+router.delete(
+	'/:id',
+	auth,
+	wrap(async (req, res) => {
+		const post = await Post.findById(req.params.id);
 
-    if (!posts) res.status(404).json({ msg: 'Post not found' });
-    res.json(posts);
-}));
+		if (post.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'User not authorised' });
+		}
 
+		await post.remove();
 
-router.delete('/:id', auth, wrap(async(req, res) => {
-    const post = await Post.findById(req.params.id);
+		res.json({ msg: 'Post removed' });
+	})
+);
 
-    if (post.user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: 'User not authorised' });
-    }
+router.put(
+	'/like/:id',
+	auth,
+	wrap(async (req, res) => {
+		const post = await Post.findById(req.params.id);
 
-    await post.remove();
+		if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+			return res.status(400).json({ msg: 'Post already liked' });
+		}
 
-    res.json({ msg: 'Post removed' });
-}));
+		post.likes.unshift({ user: req.user.id });
 
+		await post.save();
 
-router.put('/like/:id', auth, wrap(async (req, res) => {
-    const post = await Post.findById(req.params.id);
+		res.json(post.likes);
+	})
+);
 
-    if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
-        return res.status(400).json({ msg: 'Post already liked' });
-    }
+router.put(
+	'/unlike/:id',
+	auth,
+	wrap(async (req, res) => {
+		const post = await Post.findById(req.params.id);
 
-    post.likes.unshift({ user: req.user.id });
-    
-    await post.save();
+		if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+			return res.status(400).json({ msg: 'Post has not yet been liked' });
+		}
 
-    res.json(post.likes);
-}));
+		const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
 
-router.put('/unlike/:id', auth, wrap(async (req, res) => {
-    const post = await Post.findById(req.params.id);
+		post.likes.splice(removeIndex, 1);
 
-    if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
-        return res.status(400).json({ msg: 'Post has not yet been liked' });
-    }
+		await post.save();
 
-    const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
+		res.json(post.likes);
+	})
+);
 
-    post.likes.splice(removeIndex, 1);
+router.post(
+	'/comment/:id',
+	[
+		auth,
+		[
+			check('text', 'Text is required')
+				.not()
+				.isEmpty()
+		]
+	],
 
-    await post.save();
+	wrap(async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({
+				errors: errors.array()
+			});
+		}
 
-    res.json(post.likes);
-}));
+		const user = await User.findById(req.user.id).select('-password');
+		const post = await Post.findById(req.params.id);
 
-router.post('/comment/:id', [auth,
-    [
-        check('text', 'Text is required').not().isEmpty(),
-    ]
-],
+		const newCommet = {
+			text: req.body.text,
+			name: user.name,
+			avatar: user.avatar,
+			user: req.user.id
+		};
 
-    wrap(async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
-        }
+		post.comments.unshift(newCommet);
 
-        const user = await User.findById(req.user.id).select('-password');
-        const post = await Post.findById(req.params.id);
+		await post.save();
 
-        const newCommet = {
-            text: req.body.text,
-            name: user.name,
-            avatar: user.avatar,
-            user: req.user.id
-        };
+		res.json(post.comments);
+	})
+);
 
-        post.comments.unshift(newCommet);
+router.delete(
+	'/comment/:id/:comment_id',
+	auth,
+	wrap(async (req, res) => {
+		const post = await Post.findById(req.params.id);
+		const comment = post.comments.find(comment => comment.id === req.params.comment_id);
 
-        await post.save();
+		if (!comment) return res.status(404).json({ msg: 'Comment does not exist' });
 
-        res.json(post.comments);
-}));
+		if (post.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'User not authorized' });
+		}
 
-router.delete('/comment/:id/:comment_id', auth, wrap(async (req, res) => {
-    const post = await Post.findById(req.params.id);
-    const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+		const removeIndex = post.comments.map(comment => comment.user.id.toString().indexOf(req.user.id));
 
-    if (!comment) return res.status(404).json({ msg: 'Comment does not exist' });
+		post.comments.splice(removeIndex, 1);
 
-    if (post.user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: 'User not authorized' });
-    }
-
-    const removeIndex = post.comments.map(comment => comment.user.id.toString().indexOf(req.user.id));
-
-    post.comments.splice(removeIndex, 1);
-    
-    await post.save();
-    res.json(post.comments);
-}));
+		await post.save();
+		res.json(post.comments);
+	})
+);
 
 module.exports = router;
