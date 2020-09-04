@@ -1,6 +1,0 @@
-{
-	"mongoURI": "mongodb+srv://test123:test123@giedriusdev-y2il6.mongodb.net/test?retryWrites=true&w=majority",
-	"jwtSecret": "mst",
-	"githubClientId": "91d4ace88f2d329fb6c8",
-	"githubSecret": "d3fc1651287fcc4bb28bedbeeb14f2759eed7016"
-}

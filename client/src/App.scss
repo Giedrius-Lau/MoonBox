@@ -1,7 +1,7 @@
 /* Global Styles */
 :root {
-  --primary-color: #17a2b8;
-  --dark-color: #343a40;
+  --primary-color: #a900ff;
+  --dark-color: #262626;
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
   --success-color: #28a745;
@@ -14,7 +14,7 @@
 }
 
 body {
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   background-color: #fff;
@@ -59,7 +59,7 @@ img {
 
 .lead {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .text-center {
@@ -129,14 +129,17 @@ img {
 .btn {
   display: inline-block;
   background: var(--light-color);
-  color: #333;
-  padding: 0.4rem 1.3rem;
+  padding: 0.4rem 2.1rem;
   font-size: 1rem;
   border: none;
   cursor: pointer;
   margin-right: 0.5rem;
   transition: opacity 0.2s ease-in;
   outline: none;
+  text-transform: unset;
+  border-radius: 50px;
+  font-size: 18px;
+  opacity: 0.8;
 }
 
 .badge {
@@ -168,8 +171,9 @@ img {
 .bg-light,
 .badge-light,
 .alert-light {
-  background: var(--light-color);
-  color: #333;
+  background: #ffffff;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
 }
 
 .btn-dark,
@@ -206,7 +210,7 @@ img {
 }
 
 .btn:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .bg-light,
@@ -226,7 +230,6 @@ img {
 
 /* Overlay */
 .dark-overlay {
-  background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
   top: 0;
   left: 0;
@@ -245,10 +248,10 @@ img {
   color: #888;
 }
 
-.form input[type='text'],
-.form input[type='email'],
-.form input[type='password'],
-.form input[type='date'],
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="date"],
 .form select,
 .form textarea {
   display: block;
@@ -258,7 +261,7 @@ img {
   border: 1px solid #ccc;
 }
 
-.form input[type='submit'],
+.form input[type="submit"],
 button {
   font: inherit;
 }
@@ -308,8 +311,7 @@ button {
   z-index: 1;
   width: 100%;
   top: 0;
-  border-bottom: solid 1px var(--primary-color);
-  opacity: 0.9;
+  border-bottom: solid 5px var(--primary-color);
 }
 
 .navbar ul {
@@ -333,20 +335,27 @@ button {
 /* Landing Page */
 .landing {
   position: relative;
-  background: url('./img/showcase.jpg') no-repeat center center/cover;
+  background: url("./img/space.svg") no-repeat;
+  background-size: auto;
+  background-position: right center;
   height: 100vh;
 }
 
 .landing-inner {
-  color: #fff;
+  color: #222222;
   height: 100%;
-  width: 80%;
-  margin: auto;
+  width: 100%;
+  max-width: 600px;
+  padding: 43px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
+  text-align: left;
+  background: linear-gradient(0, white, transparent);
+
+  @media (min-width: 768px) {
+    background: linear-gradient(91deg, white, transparent);
+  }
 }
 
 /* Profiles Page */
@@ -364,10 +373,10 @@ button {
 .profile-grid {
   display: grid;
   grid-template-areas:
-    'top top'
-    'about about'
-    'exp edu'
-    'github github';
+    "top top"
+    "about about"
+    "exp edu"
+    "github github";
   grid-gap: 1rem;
 }
 
@@ -550,11 +559,11 @@ button {
 
   .profile-grid {
     grid-template-areas:
-      'top'
-      'about'
-      'exp'
-      'edu'
-      'github';
+      "top"
+      "about"
+      "exp"
+      "edu"
+      "github";
   }
 
   .profile-about .skills {
@@ -573,5 +582,15 @@ button {
   .post a,
   .post button {
     padding: 0.3rem 0.4rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing {
+    background-position: right 80px;
+  }
+
+  .landing-inner {
+    margin-top: 120px;
   }
 }
