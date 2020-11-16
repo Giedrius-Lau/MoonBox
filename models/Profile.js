@@ -107,7 +107,8 @@ const ProfileSchema = new mongoose.Schema({
 	date: {
 		type: Date,
 		default: Date.now
-	}
+	},
+    imageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Image' },
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileSchema);

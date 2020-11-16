@@ -8,6 +8,7 @@ const { check, validationResult } = require('express-validator/check');
 const Profile = require('../../models/Profile');
 const User = require('../../models/user/User');
 const Post = require('../../models/Post');
+const Image = require('../../models/Image');
 
 router.get('/me', auth, async (req, res) => {
 	try {
@@ -163,7 +164,7 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 
-		const { title, company, location, from, to, current, description } = req.body;
+		const { title, company, location, from, to, current, description, imageId } = req.body;
 
 		const newExp = {
 			title,
@@ -172,13 +173,15 @@ router.put(
 			from,
 			to,
 			current,
-			description
+			description,
+			imageId
 		};
 
 		try {
 			const profile = await Profile.findOne({ user: req.user.id });
-
+console.log(profile.experience)
 			profile.experience.unshift(newExp);
+			console.log(profile.experience)
 
 			await profile.save();
 
@@ -302,6 +305,26 @@ router.get('/github/:username', (req, res) => {
 		console.error(err.message);
 		res.status(500).send('Server Error');
 	}
+});
+
+router.post("/upload", (req, res) => {
+    if (req.files === null) {
+        return res.status(400).json({ msg: "No file uploaded" });
+    }
+
+	const file = req.files.file;
+	
+	console.log(file)
+
+    file.mv(`${process.cwd()}/client/public/uploads/${file.name}`, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send(err);
+        }
+		
+		res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+		
+    });
 });
 
 module.exports = router;
