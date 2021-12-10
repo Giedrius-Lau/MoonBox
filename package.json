@@ -4,7 +4,7 @@
 	"description": "Social network",
 	"main": "index.js",
 	"scripts": {
-		"start": "node --trace-warnings server ",
+		"start": "node server",
 		"server": "nodemon server",
 		"client": "npm start --prefix client",
 		"dev": "concurrently \"npm run server\" \"npm run client\"",
