@@ -3,8 +3,9 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const jwt = require('jsonwebtoken');
 const brypt = require('bcryptjs');
-const config = require('config');
 const { check, validationResult } = require('express-validator/check');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const User = require('../../models/user/User');
 
