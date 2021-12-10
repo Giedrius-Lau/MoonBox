@@ -4,7 +4,7 @@
 	"description": "Social network",
 	"main": "index.js",
 	"scripts": {
-		"start": "node server",
+		"start": "node --trace-warnings server ",
 		"server": "nodemon server",
 		"client": "npm start --prefix client",
 		"dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -16,6 +16,7 @@
 		"bcryptjs": "^2.4.3",
 		"bootstrap": "^4.5.2",
 		"config": "^3.1.0",
+		"dotenv": "^10.0.0",
 		"express": "^4.17.1",
 		"express-async-wrap": "^1.0.0",
 		"express-fileupload": "^1.2.0",
